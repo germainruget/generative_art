@@ -1,13 +1,12 @@
 import React from 'react';
 
-import { GenerativeBox } from './components/GenerativeBox/GenerativeBox';
-
 import './App.scss';
+import { BlobSvg } from './components/SVG/BobSvg';
 
 function App() {
     return (
         <div className="App">
-            <GenerativeBox />
+            <BlobSvg />
         </div>
     );
 }
