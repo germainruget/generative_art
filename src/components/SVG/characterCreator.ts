@@ -1,5 +1,6 @@
 import { Svg, SVG } from '@svgdotjs/svg.js';
 import { random } from '../../utils/random';
+import { randomGreyHex } from '../../utils/randomGrey';
 import { spline } from '../../utils/spline';
 
 export class CharacterCreator {
@@ -59,14 +60,45 @@ export class CharacterCreator {
                 width: 1,
                 color: '#000',
             })
-            .fill('transparent');
+            .fill({color: randomGreyHex(), opacity: 0.5});
 
         const length = blob.node.getTotalLength();
-        console.log(length);
-        const pt = blob.node.getPointAtLength(length / 4);
-        this.svg.circle(10).cx(pt.x).cy(pt.y);
-        const pt2 = blob.node.getPointAtLength(length / 2.5);
-        this.svg.circle(10).cx(pt2.x).cy(pt2.y);
+
+        const rdmNbHairs = random(2, 150);
+        const rdmHaiChoice = random(1, 3);
+
+        for (let i = 0; i < rdmNbHairs; i++) {
+            const rdmHairPts = random(length / 4, length / 2.2);
+            const pt = blob.node.getPointAtLength(rdmHairPts);
+
+            const rdmHairLength = random(pt.y - 5, pt.y - 25);
+
+            switch (rdmHaiChoice) {
+                case 1:
+                    this.svg
+                        .path(`M ${pt.x} ${pt.y} V ${rdmHairLength}`)
+                        .stroke({
+                            width: 1,
+                            color: '#000',
+                        })
+                        .fill('transparent');
+                    break;
+
+                default:
+                    this.svg
+                        .path(
+                            `M ${pt.x} ${pt.y} C ${pt.x + random(2, 50)} ${pt.y + random(2, 50)} ${
+                                pt.x - random(2, 50)
+                            } ${pt.y - random(2, 50)} ${pt.x} ${rdmHairLength}`,
+                        )
+                        .stroke({
+                            width: 1,
+                            color: '#000',
+                        })
+                        .fill('transparent');
+                    break;
+            }
+        }
     }
 
     drawEye(x: number, y: number) {
@@ -82,9 +114,16 @@ export class CharacterCreator {
                 width: 1,
                 color: '#000',
             })
-            .fill('#fff');
+            .fill({ color: '#fff', opacity: 0.8 });
 
         eye.path(this.drawBlob(x, y, random(6, 12), size / random(2, 4), 2)).fill('#000');
+
+        eye.path(`M ${x - size} ${y} A ${random(8, 10)} ${random(8, 10)} ${random(8, 10)} 10 ${x + size} ${y + 10} `)
+            .stroke({
+                width: 1,
+                color: '#000',
+            })
+            .fill('transparent');
     }
 
     drawEyes() {
@@ -94,5 +133,40 @@ export class CharacterCreator {
         // draw 2 eyes, equidistant from the centre of the character
         this.drawEye(this.x - maxWidth, random(this.y - 25, this.y));
         this.drawEye(this.x + maxWidth, random(this.y - 25, this.y));
+    }
+
+    drawNose() {
+        const nose = this.svg.group();
+
+        const size = random(2, 5);
+
+        const toggleR = random(size / 2 + 1, 6);
+        const toggleL = random(size / 2 + 1, 6);
+
+        const toggleYR = random(10, 15);
+        const toggleYL = random(10, 15);
+
+        nose.circle(size)
+            .cx(this.x + toggleR)
+            .cy(this.y + toggleYR)
+            .fill('#000');
+
+        nose.circle(size)
+            .cx(this.x - toggleL)
+            .cy(this.y + toggleYL)
+            .fill('#000');
+
+        // MOUTH
+        nose.path(
+            `M ${this.x + toggleR} ${this.y + toggleYR + 20}
+            C ${this.x + toggleR + random(2, 20)} ${this.y + toggleYR + random(2, 20) + 20}
+            ${this.x + toggleR - random(2, 20)} ${this.y + toggleYR - random(2, 20) + 20}
+            ${this.x - toggleL} ${this.y + toggleYL + 20}`,
+        )
+            .stroke({
+                width: 1,
+                color: '#000',
+            })
+            .fill('transparent');
     }
 }

@@ -27,9 +27,14 @@ export const BlobSvg: React.FC<BlobSvgProps> = () => {
         console.log(char);
         char.drawBody();
         char.drawEyes();
+        char.drawNose();
 
         SVGContainer.add(char.svg);
     };
+
+    setInterval(() => {
+        draw();
+    }, 500);
 
     useEffect(() => {
         if (
